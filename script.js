@@ -7,27 +7,39 @@ document.addEventListener("DOMContentLoaded", () => {
   const cardFallback = document.getElementById("card-fallback");
 
   let isOpen = false;
+  let controlsTimer = null;
 
-  // If the image fails to load, show a helpful message instead of an empty card
+  function showFallback() {
+    if (cardArtwork) cardArtwork.style.display = "none";
+    if (cardFallback) cardFallback.classList.add("show");
+  }
+
   if (cardArtwork && cardFallback) {
-    cardArtwork.addEventListener("error", () => {
-      cardArtwork.style.display = "none";
-      cardFallback.classList.add("show");
-    });
+    if (cardArtwork.complete && cardArtwork.naturalWidth === 0) {
+      showFallback();
+    } else {
+      cardArtwork.addEventListener("error", showFallback);
+    }
   }
 
   function openInvitation() {
     if (isOpen) return;
     isOpen = true;
 
+    clearTimeout(controlsTimer);
+
     envelopeWrapper.classList.add("open");
     stage.classList.add("is-open");
     envelopeWrapper.setAttribute("aria-expanded", "true");
 
-    promptText.hidden = true;
-    setTimeout(() => {
-      resetBtn.hidden = false;
-    }, 950);
+    if (promptText) promptText.hidden = true;
+    if (resetBtn) resetBtn.hidden = true;
+
+    controlsTimer = setTimeout(() => {
+      if (isOpen && resetBtn) {
+        resetBtn.hidden = false;
+      }
+    }, 900);
   }
 
   function closeInvitation(event) {
@@ -35,37 +47,56 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!isOpen) return;
     isOpen = false;
 
+    clearTimeout(controlsTimer);
+
     envelopeWrapper.classList.remove("open");
     stage.classList.remove("is-open");
     envelopeWrapper.setAttribute("aria-expanded", "false");
 
-    resetBtn.hidden = true;
-    setTimeout(() => {
-      promptText.hidden = false;
-    }, 650);
+    if (resetBtn) resetBtn.hidden = true;
+
+    controlsTimer = setTimeout(() => {
+      if (!isOpen && promptText) {
+        promptText.hidden = false;
+      }
+    }, 600);
   }
 
-  envelopeWrapper.addEventListener("click", openInvitation);
+  envelopeWrapper.addEventListener("click", () => {
+    if (!isOpen) openInvitation();
+  });
+
   envelopeWrapper.addEventListener("keydown", (e) => {
-    if (e.key === "Enter" || e.key === " ") {
+    if (!isOpen && (e.key === "Enter" || e.key === " ")) {
       e.preventDefault();
       openInvitation();
     }
   });
 
-  resetBtn.addEventListener("click", closeInvitation);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && isOpen) {
+      closeInvitation();
+    }
+  });
+
+  if (resetBtn) {
+    resetBtn.addEventListener("click", closeInvitation);
+  }
 
   /* Ambient Floating Gold Particles */
   const canvas = document.getElementById("particles-canvas");
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas ? canvas.getContext("2d") : null;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   let particles = [];
 
   function resizeCanvas() {
+    if (!canvas) return;
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
 
   function createParticles() {
+    if (!canvas) return;
     const count = Math.min(50, Math.floor((window.innerWidth * window.innerHeight) / 18000));
     particles = Array.from({ length: count }, () => ({
       x: Math.random() * canvas.width,
@@ -79,6 +110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function animateParticles() {
+    if (!canvas || !ctx) return;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     particles.forEach((p) => {
@@ -100,15 +132,20 @@ document.addEventListener("DOMContentLoaded", () => {
       ctx.fill();
     });
 
-    requestAnimationFrame(animateParticles);
+    if (!prefersReducedMotion) {
+      requestAnimationFrame(animateParticles);
+    }
   }
 
-  window.addEventListener("resize", () => {
+  if (canvas && ctx) {
+    window.addEventListener("resize", () => {
+      resizeCanvas();
+      createParticles();
+      if (prefersReducedMotion) animateParticles();
+    });
+
     resizeCanvas();
     createParticles();
-  });
-
-  resizeCanvas();
-  createParticles();
-  animateParticles();
+    animateParticles();
+  }
 });

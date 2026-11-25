@@ -4,52 +4,54 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ace Awards 2026 — Written in the Stars</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Great+Vibes&family=Montserrat:wght@400;500;600&display=swap"
     rel="stylesheet"
   />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <canvas id="particles-canvas" aria-hidden="true"></canvas>
   <div class="velvet-backdrop" aria-hidden="true"></div>
+  <canvas id="particles-canvas" aria-hidden="true"></canvas>
 
   <main class="scene">
-    <div class="stage">
-      <p class="top-calligraphy" id="top-heading">A Royal Celestial Invitation</p>
+    <section class="stage" aria-label="Interactive Invitation">
+      <p class="top-calligraphy">Written in the Stars</p>
 
       <div
-        class="envelope-wrapper"
         id="envelope-wrapper"
+        class="envelope-wrapper"
         role="button"
         tabindex="0"
-        aria-label="Click to open your invitation"
+        aria-label="Open Ace Awards 2026 invitation"
         aria-expanded="false"
       >
-        <div class="envelope" id="envelope">
-          <!-- Layer 1: Envelope Back -->
+        <div class="envelope">
           <div class="envelope-back"></div>
 
-          <!-- Layer 2: Invitation Card with Your Picture -->
-          <article class="invitation-card" id="invitation-card">
+          <article class="invitation-card" aria-label="Ace Awards 2026 Invitation Card">
             <img
-              src="assets/ace-awards-card.jpg"
-              alt="Ace Awards 2026 Written in the Stars Invitation"
+              id="card-artwork"
               class="card-artwork"
+              src="./ASSETS/ace-awards-card.jpg"
+              alt="Ace Awards 2026 Written in the Stars Invitation"
             />
+            <div id="card-fallback" class="card-fallback">
+              <h1 class="fallback-title">Ace Awards 2026</h1>
+              <p class="fallback-sub">Written in the Stars</p>
+              <p class="fallback-note">
+                Make sure your image exists at:
+                <code>ASSETS/ace-awards-card.jpg</code>
+              </p>
+            </div>
           </article>
 
-          <!-- Layer 3: Front Envelope Pocket -->
           <div class="envelope-pocket"></div>
+          <div class="envelope-flap"></div>
 
-          <!-- Layer 4: Top 3D Rotating Flap -->
-          <div class="envelope-flap" id="envelope-flap"></div>
-
-          <!-- Layer 5: Burgundy Wax Seal -->
-          <div class="wax-seal" id="wax-seal" aria-hidden="true">
+          <div class="wax-seal" aria-hidden="true">
             <div class="seal-rim">
               <span class="monogram">AA</span>
             </div>
@@ -58,12 +60,12 @@
       </div>
 
       <div class="controls">
-        <p class="prompt-text" id="prompt-text">✦ Click to Open Your Invitation ✦</p>
-        <button class="reset-btn" id="reset-btn" type="button" hidden>
-          ↺ Close &amp; Seal Envelope
+        <p id="prompt-text" class="prompt-text">Tap or press Enter to open</p>
+        <button id="reset-btn" class="reset-btn" type="button" hidden>
+          Close Invitation
         </button>
       </div>
-    </div>
+    </section>
   </main>
 
   <script src="script.js"></script>
